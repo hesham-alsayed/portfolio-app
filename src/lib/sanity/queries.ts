@@ -61,6 +61,11 @@ export const portfolioQuery = `
     url,
     iconKey,
     order
+  },
+  "categories": *[_type == "category"] | order(order asc){
+    _id,
+    name,
+    order
   }
 }
 `;

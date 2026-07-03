@@ -1,40 +1,22 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { Skill, SkillCategory } from "@/types/cms";
+import type { Skill } from "@/types/cms";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const categoryOrder: SkillCategory[] = [
-  "frontend",
-  "backend",
-  "tools",
-  "other",
-];
-
 export function groupSkillsByCategory(
   skills: Skill[],
-): Record<SkillCategory, Skill[]> {
-  const grouped: Record<SkillCategory, Skill[]> = {
-    frontend: [],
-    backend: [],
-    tools: [],
-    other: [],
-  };
+): Record<string, Skill[]> {
+  const grouped: Record<string, Skill[]> = {};
 
   for (const skill of skills) {
-    grouped[skill.category]?.push(skill);
+    if (!grouped[skill.category]) grouped[skill.category] = [];
+    grouped[skill.category].push(skill);
   }
 
   return grouped;
-}
-
-export function getOrderedSkillCategories(
-  skills: Skill[],
-): SkillCategory[] {
-  const grouped = groupSkillsByCategory(skills);
-  return categoryOrder.filter((category) => grouped[category].length > 0);
 }
 
 export function formatExperienceDate(date: string): string {

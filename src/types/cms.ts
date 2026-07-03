@@ -1,4 +1,4 @@
-export type SkillCategory = "frontend" | "backend" | "tools" | "other";
+export type SkillCategory = string;
 
 export type ButtonVariant = "primary" | "secondary" | "ghost";
 
@@ -105,10 +105,7 @@ export interface ProjectActionLabels {
 }
 
 export interface SkillCategoryLabels {
-  frontend?: string;
-  backend?: string;
-  tools?: string;
-  other?: string;
+  [key: string]: string | undefined;
 }
 
 export interface SiteSettings {
@@ -130,6 +127,13 @@ export interface PortfolioData {
   projects: Project[];
   experience: Experience[];
   socialLinks: SocialLink[];
+  categories: Category[];
+}
+
+export interface Category {
+  _id: string;
+  name: string;
+  order?: number;
 }
 
 export interface ContactFormPayload {

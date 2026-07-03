@@ -1,14 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { Skill, SkillCategory, SkillCategoryLabels } from "@/types/cms";
-import { getOrderedSkillCategories, groupSkillsByCategory } from "@/lib/utils";
+import type { Skill, Category } from "@/types/cms";
+import { groupSkillsByCategory } from "@/lib/utils";
 import { getSkillIcon } from "@/lib/skillIcons";
 
 interface SkillsSectionProps {
   skills: Skill[];
+  categories: Category[];
   sectionLabel?: string;
-  categoryLabels?: SkillCategoryLabels;
 }
 
 const containerVariants = {
@@ -26,11 +26,10 @@ const itemVariants = {
 
 export function SkillsSection({
   skills,
+  categories,
   sectionLabel,
-  categoryLabels,
 }: SkillsSectionProps) {
   const grouped = groupSkillsByCategory(skills);
-  const categories = getOrderedSkillCategories(skills);
 
   return (
     <section id="skills" className="px-6 py-24">
@@ -55,16 +54,13 @@ export function SkillsSection({
           viewport={{ once: true }}
           className="mt-16 space-y-16"
         >
-          {categories.map((category) => {
-            const label =
-              categoryLabels?.[category as keyof SkillCategoryLabels] ||
-              category;
-            const categorySkills = grouped[category as SkillCategory];
+          {categories.filter((c) => grouped[c.name]).map((category) => {
+            const categorySkills = grouped[category.name];
 
             return (
-              <motion.div key={category} variants={itemVariants}>
+              <motion.div key={category._id} variants={itemVariants}>
                 <h3 className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-muted-foreground">
-                  {label}
+                  {category.name}
                 </h3>
                 <div className="flex flex-wrap justify-center gap-3">
                   {categorySkills.map((skill) => (

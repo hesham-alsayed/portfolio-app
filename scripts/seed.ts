@@ -10,7 +10,7 @@ const client = createClient({
   token: process.env.SANITY_WRITE_TOKEN,
 });
 
-const TYPES = ["siteSettings", "personalInfo", "skill", "project", "experience", "socialLink"];
+const TYPES = ["siteSettings", "personalInfo", "skill", "project", "experience", "socialLink", "category"];
 
 async function deleteAll() {
   console.log("🗑️  Deleting existing documents...\n");
@@ -72,12 +72,7 @@ async function seed() {
       live: "Live Demo",
       source: "Source Code",
     },
-    skillCategoryLabels: {
-      frontend: "Frontend Development",
-      backend: "Backend Development",
-      tools: "Tools & Platforms",
-      other: "Databases & ORM",
-    },
+    skillCategoryLabels: {},
     experiencePresentLabel: "Present",
     footerText: "© 2026 Hisham Al Sayed Gomaa. Built with Next.js & Sanity.",
   });
@@ -144,7 +139,7 @@ async function seed() {
       _type: "skill",
       _id: uuid(),
       name: skill.name,
-      category: "frontend",
+      category: "Frontend Development",
       iconKey: skill.iconKey,
       order: order++,
     });
@@ -156,7 +151,7 @@ async function seed() {
       _type: "skill",
       _id: uuid(),
       name: skill.name,
-      category: "backend",
+      category: "Backend Development",
       iconKey: skill.iconKey,
       order: order++,
     });
@@ -168,7 +163,7 @@ async function seed() {
       _type: "skill",
       _id: uuid(),
       name: skill.name,
-      category: "tools",
+      category: "Tools & Platforms",
       iconKey: skill.iconKey,
       order: order++,
     });
@@ -180,7 +175,7 @@ async function seed() {
       _type: "skill",
       _id: uuid(),
       name: skill.name,
-      category: "other",
+      category: "Databases & ORM",
       iconKey: skill.iconKey,
       order: order++,
     });
@@ -247,6 +242,23 @@ async function seed() {
       url: link.url,
       iconKey: link.iconKey,
       order: link.order,
+    });
+  }
+
+  // 7. Categories
+  const categories = [
+    { name: "Frontend Development", order: 0 },
+    { name: "Backend Development", order: 1 },
+    { name: "Databases & ORM", order: 2 },
+    { name: "Tools & Platforms", order: 3 },
+  ];
+
+  for (const cat of categories) {
+    await createDocument({
+      _type: "category",
+      _id: uuid(),
+      name: cat.name,
+      order: cat.order,
     });
   }
 

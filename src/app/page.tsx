@@ -31,7 +31,7 @@ export default async function HomePage() {
     return <main className="min-h-screen" />;
   }
 
-  const { siteSettings, personalInfo, skills, projects, experience, socialLinks } =
+  const { siteSettings, personalInfo, skills, projects, experience, socialLinks, categories } =
     data;
 
   return (
@@ -58,8 +58,8 @@ export default async function HomePage() {
 
           <SkillsSection
             skills={skills}
+            categories={categories}
             sectionLabel="Skills"
-            categoryLabels={siteSettings.skillCategoryLabels}
           />
 
           <ExperienceSection
