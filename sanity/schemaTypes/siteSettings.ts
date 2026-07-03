@@ -70,6 +70,11 @@ export const siteSettings = defineType({
           title: "Success Message",
           type: "string",
         }),
+        defineField({
+          name: "phone",
+          title: "Phone Number",
+          type: "string",
+        }),
       ],
     }),
     defineField({

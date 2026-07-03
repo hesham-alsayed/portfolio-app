@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 import type { ContactFormPayload, ContactFormResponse } from "@/types/cms";
 
 function validatePayload(body: Partial<ContactFormPayload>): body is ContactFormPayload {
@@ -21,39 +22,27 @@ export async function POST(request: Request) {
       );
     }
 
-    const webhookUrl = process.env.CONTACT_WEBHOOK_URL;
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const contactEmail = process.env.CONTACT_TO_EMAIL;
+    const smtpHost = process.env.SMTP_HOST;
+    const smtpPort = process.env.SMTP_PORT;
+    const smtpUser = process.env.SMTP_USER;
+    const smtpPass = process.env.SMTP_PASS;
+    const toEmail = process.env.CONTACT_TO_EMAIL || "heshamelsauied@gmail.com";
 
-    if (webhookUrl) {
-      const webhookResponse = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+    if (smtpHost && smtpUser && smtpPass) {
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: Number(smtpPort) || 587,
+        secure: Number(smtpPort) === 465,
+        auth: { user: smtpUser, pass: smtpPass },
       });
 
-      if (!webhookResponse.ok) {
-        throw new Error("Unable to deliver your message.");
-      }
-    } else if (resendApiKey && contactEmail) {
-      const emailResponse = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendApiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: process.env.CONTACT_FROM_EMAIL || "Portfolio <onboarding@resend.dev>",
-          to: [contactEmail],
-          subject: `Portfolio contact from ${body.name}`,
-          reply_to: body.email,
-          text: body.message,
-        }),
+      await transporter.sendMail({
+        from: smtpUser,
+        to: toEmail,
+        subject: `Portfolio contact from ${body.name}`,
+        text: `Name: ${body.name}\nEmail: ${body.email}\n\n${body.message}`,
+        replyTo: body.email,
       });
-
-      if (!emailResponse.ok) {
-        throw new Error("Unable to deliver your message.");
-      }
     } else if (process.env.NODE_ENV === "development") {
       console.info("Contact form submission:", body);
     } else {
@@ -68,14 +57,14 @@ export async function POST(request: Request) {
 
     return NextResponse.json<ContactFormResponse>({
       success: true,
-      message: process.env.CONTACT_SUCCESS_MESSAGE || "Message sent successfully.",
+      message: "✅ Message sent successfully! I'll get back to you soon.",
     });
   } catch (error) {
+    console.error("Contact error:", error);
     return NextResponse.json<ContactFormResponse>(
       {
         success: false,
-        message:
-          error instanceof Error ? error.message : "Unable to send message.",
+        message: error instanceof Error ? error.message : "Unable to send message.",
       },
       { status: 500 },
     );

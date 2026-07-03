@@ -1,97 +1,107 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
+import { FaDownload, FaCode, FaEnvelope } from "react-icons/fa";
 import type { PersonalInfo } from "@/types/cms";
-import { Button } from "@/components/ui/Button";
+import { SpiderWebCanvas } from "@/components/ui/SpiderWebCanvas";
 
 interface HeroSectionProps {
   personalInfo: PersonalInfo;
 }
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as const },
-  },
-};
-
 export function HeroSection({ personalInfo }: HeroSectionProps) {
+  const [displayedText, setDisplayedText] = useState("");
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const text = personalInfo.headline || personalInfo.name;
+    let index = 0;
+    setDisplayedText("");
+    const interval = setInterval(() => {
+      if (index < text.length) {
+        setDisplayedText(text.slice(0, index + 1));
+        index++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 60);
+    return () => clearInterval(interval);
+  }, [personalInfo.headline, personalInfo.name]);
+
   return (
     <section
       id="hero"
-      className="relative flex min-h-[calc(100vh-5rem)] items-center justify-center overflow-hidden px-6 py-20"
+      ref={sectionRef}
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6"
     >
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/3 h-96 w-96 -translate-x-1/2 rounded-full bg-accent/8 blur-3xl" />
-        <div className="absolute right-1/4 top-1/4 h-48 w-48 rounded-full bg-accent/5 blur-2xl" />
-        <div className="absolute bottom-1/4 left-1/4 h-40 w-40 rounded-full bg-accent/5 blur-2xl" />
-      </div>
+      <SpiderWebCanvas />
 
       <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="relative z-10 mx-auto max-w-3xl text-center"
       >
+        <motion.h1 className="whitespace-nowrap text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+          {displayedText.split("").map((char, i) => (
+            <span
+              key={i}
+              className="inline-block animate-letter"
+              style={{ animationDelay: `${i * 0.035}s` }}
+            >
+              {char === " " ? "\u00A0" : char}
+            </span>
+          ))}
+        </motion.h1>
+
         <motion.p
-          variants={itemVariants}
-          className="mb-6 text-sm font-medium uppercase tracking-[0.25em] text-accent"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-4 text-lg font-medium text-muted-foreground sm:text-xl"
         >
           {personalInfo.role}
         </motion.p>
 
-        <motion.h1
-          variants={itemVariants}
-          className="text-5xl font-bold tracking-tight text-foreground sm:text-6xl md:text-7xl"
-        >
-          {personalInfo.headline}
-        </motion.h1>
-
         {personalInfo.subheadline ? (
           <motion.p
-            variants={itemVariants}
-            className="mt-8 max-w-2xl text-base leading-relaxed text-muted sm:text-lg"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+            className="mt-6 mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
           >
             {personalInfo.subheadline}
           </motion.p>
         ) : null}
 
-        {personalInfo.heroActions?.length ? (
-          <motion.div
-            variants={itemVariants}
-            className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
-          >
-            {personalInfo.heroActions.map((action) => (
-              <Button
-                key={`${action.label}-${action.href}`}
-                href={action.href}
-                variant={action.variant ?? "primary"}
-              >
-                {action.label}
-              </Button>
-            ))}
-          </motion.div>
-        ) : null}
-
         <motion.div
-          variants={itemVariants}
-          className="mt-16 flex items-center gap-6 text-muted"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+          className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
         >
-          <span className="h-px w-12 bg-border" />
-          <span className="text-xs uppercase tracking-[0.2em]">
-            MERN Stack
-          </span>
-          <span className="h-px w-12 bg-border" />
+          {personalInfo.heroActions?.map((action) => (
+            <a
+              key={action.label}
+              href={action.href}
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-foreground/20 bg-foreground px-8 py-3 text-sm font-medium text-background transition-all hover:bg-foreground/90 hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto min-w-[160px]"
+            >
+              {action.label === "View Projects" ? <FaCode /> : null}
+              {action.label === "Contact Me" ? <FaEnvelope /> : null}
+              {action.label}
+            </a>
+          ))}
+          {personalInfo.resumeUrl ? (
+            <a
+              href={personalInfo.resumeUrl}
+              download
+              className="inline-flex items-center justify-center gap-2 rounded-md border border-foreground/20 bg-background px-8 py-3 text-sm font-medium text-foreground transition-all hover:bg-muted hover:-translate-y-0.5 w-full sm:w-auto min-w-[160px]"
+            >
+              <FaDownload />
+              Resume
+            </a>
+          ) : null}
         </motion.div>
       </motion.div>
     </section>

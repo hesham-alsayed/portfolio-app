@@ -1,4 +1,10 @@
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 import type { Skill, SkillCategory } from "@/types/cms";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 const categoryOrder: SkillCategory[] = [
   "frontend",

@@ -37,14 +37,27 @@ export interface SanityImageAsset {
   };
 }
 
+export interface ProjectFeature {
+  _key: string;
+  category: "store" | "admin";
+  title: string;
+  items: string[];
+}
+
 export interface Project {
   _id: string;
   title: string;
   slug: string;
   description: string;
-  image: SanityImageAsset;
+  detailedDescription?: string;
+  image?: SanityImageAsset;
+  storeUrl?: string;
+  adminUrl?: string;
+  adminEmail?: string;
+  adminPassword?: string;
   techStack: string[];
-  liveUrl?: string;
+  features?: ProjectFeature[];
+  notes?: string[];
   githubUrl?: string;
   order?: number;
 }
@@ -83,6 +96,7 @@ export interface ContactSectionContent {
   emailLabel?: string;
   messageLabel?: string;
   successMessage?: string;
+  phone?: string;
 }
 
 export interface ProjectActionLabels {

@@ -7,6 +7,7 @@ import { ContactSection } from "@/components/sections/ContactSection";
 import { ExperienceSection } from "@/components/sections/ExperienceSection";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { ProjectsSection } from "@/components/sections/ProjectsSection";
+import { SkillsSection } from "@/components/sections/SkillsSection";
 import { isSanityConfigured } from "@/lib/sanity/env";
 import { getPortfolioData } from "@/lib/sanity/queries";
 
@@ -46,15 +47,19 @@ export default async function HomePage() {
 
           <AboutSection
             personalInfo={personalInfo}
-            skills={skills}
             sectionLabel={siteSettings.sectionLabels?.about}
-            categoryLabels={siteSettings.skillCategoryLabels}
           />
 
           <ProjectsSection
             projects={projects}
             sectionLabel={siteSettings.sectionLabels?.projects}
             actionLabels={siteSettings.projectActionLabels}
+          />
+
+          <SkillsSection
+            skills={skills}
+            sectionLabel="Skills"
+            categoryLabels={siteSettings.skillCategoryLabels}
           />
 
           <ExperienceSection
@@ -66,6 +71,7 @@ export default async function HomePage() {
           <ContactSection
             contactSection={siteSettings.contactSection}
             socialLinks={socialLinks}
+            email={personalInfo.email}
           />
         </main>
       </PageTransition>

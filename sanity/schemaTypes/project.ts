@@ -20,17 +20,42 @@ export const project = defineType({
     }),
     defineField({
       name: "description",
-      title: "Description",
+      title: "Short Description",
       type: "text",
-      rows: 4,
+      rows: 3,
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "detailedDescription",
+      title: "Detailed Description",
+      type: "text",
+      rows: 6,
     }),
     defineField({
       name: "image",
       title: "Image",
       type: "image",
       options: { hotspot: true },
-      validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "storeUrl",
+      title: "Store URL",
+      type: "url",
+    }),
+    defineField({
+      name: "adminUrl",
+      title: "Admin Dashboard URL",
+      type: "url",
+    }),
+    defineField({
+      name: "adminEmail",
+      title: "Admin Email (Demo)",
+      type: "string",
+    }),
+    defineField({
+      name: "adminPassword",
+      title: "Admin Password (Demo)",
+      type: "string",
     }),
     defineField({
       name: "techStack",
@@ -40,9 +65,48 @@ export const project = defineType({
       validation: (rule) => rule.min(1),
     }),
     defineField({
-      name: "liveUrl",
-      title: "Live URL",
-      type: "url",
+      name: "features",
+      title: "Features",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "featureGroup",
+          fields: [
+            defineField({
+              name: "category",
+              title: "Category",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Store", value: "store" },
+                  { title: "Admin", value: "admin" },
+                ],
+              },
+            }),
+            defineField({
+              name: "title",
+              title: "Group Title",
+              type: "string",
+            }),
+            defineField({
+              name: "items",
+              title: "Feature Items",
+              type: "array",
+              of: [{ type: "string" }],
+            }),
+          ],
+          preview: {
+            select: { title: "title", subtitle: "category" },
+          },
+        },
+      ],
+    }),
+    defineField({
+      name: "notes",
+      title: "Notes",
+      type: "array",
+      of: [{ type: "string" }],
     }),
     defineField({
       name: "githubUrl",

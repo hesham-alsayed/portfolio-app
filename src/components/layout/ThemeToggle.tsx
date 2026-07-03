@@ -2,7 +2,6 @@
 
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { FaMoon, FaSun } from "react-icons/fa";
 
 export function ThemeToggle() {
@@ -12,21 +11,19 @@ export function ThemeToggle() {
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
-    return <span className="h-10 w-10 rounded-full border border-border" />;
+    return <span className="h-8 w-8 rounded-md" />;
   }
 
   const isDark = (theme === "system" ? resolvedTheme : theme) === "dark";
 
   return (
-    <motion.button
+    <button
       type="button"
       aria-label="Toggle theme"
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface text-foreground transition-colors hover:border-accent hover:text-accent"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
     >
-      {isDark ? <FaSun className="h-4 w-4" /> : <FaMoon className="h-4 w-4" />}
-    </motion.button>
+      {isDark ? <FaSun className="h-3.5 w-3.5" /> : <FaMoon className="h-3.5 w-3.5" />}
+    </button>
   );
 }

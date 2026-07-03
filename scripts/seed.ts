@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { createClient } from "@sanity/client";
 import { v4 as uuid } from "uuid";
 
@@ -9,10 +10,27 @@ const client = createClient({
   token: process.env.SANITY_WRITE_TOKEN,
 });
 
+const TYPES = ["siteSettings", "personalInfo", "skill", "project", "experience", "socialLink"];
+
+async function deleteAll() {
+  console.log("🗑️  Deleting existing documents...\n");
+  for (const type of TYPES) {
+    const ids = await client.fetch<string[]>(`*[_type == $type]._id`, { type });
+    if (ids.length > 0) {
+      const tx = client.transaction();
+      for (const id of ids) tx.delete(id);
+      await tx.commit();
+      console.log(`  ✓ Deleted ${ids.length} ${type}(s)`);
+    }
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createDocument(doc: any) {
-  const result = await client.create(doc);
-  console.log(`  ✓ Created ${doc._type}: ${doc.name || doc.title || doc.platform || "siteSettings"}`);
+  const useReplace = doc._id === "siteSettings" || doc._id === "personalInfo";
+  const result = useReplace ? await client.createOrReplace(doc) : await client.create(doc);
+  const label = doc.name || doc.title || doc.platform || doc.company || doc._type;
+  console.log(`  ✓ Created ${doc._type}: ${label}`);
   return result;
 }
 
@@ -25,6 +43,10 @@ async function seed() {
 
   console.log("🌱 Seeding Sanity dataset...\n");
 
+  await deleteAll();
+
+  console.log("\n📦 Creating new documents...\n");
+
   // 1. Site Settings
   await createDocument({
     _type: "siteSettings",
@@ -34,7 +56,7 @@ async function seed() {
     sectionLabels: {
       about: "About",
       projects: "Projects",
-      experience: "Education",
+      experience: "Experience",
       contact: "Contact",
     },
     contactSection: {
@@ -66,16 +88,16 @@ async function seed() {
     _id: "personalInfo",
     name: "Hisham Al Sayed Gomaa",
     role: "Full Stack MERN Developer",
-    headline: "Hi there, I'm Hesham",
+    headline: "Hi there, I'm Hisham",
     subheadline:
-      "Passionate Full Stack Developer focused on building scalable, modern, and high-performance web applications using MERN Stack technologies.",
+      "Passionate Full Stack Developer focused on building scalable, modern, and high-performance web applications using MERN Stack technologies. I specialize in React, Node.js, Express, and MongoDB — delivering complete end-to-end solutions with clean architecture and responsive design.",
     bio: "MERN Stack Developer experienced in building full-stack web applications using React, Node.js, Express, and MongoDB. Strong knowledge of REST APIs, authentication, and state management. Focused on performance, scalability, and clean code. Quick to adapt to new technologies and passionate about building scalable applications that solve real-world problems. Effective communicator and team player with strong time management skills.",
     email: "heshamelsauied@gmail.com",
     location: "Al Sharqiya, Egypt",
-    resumeUrl: "#",
+    resumeUrl: "/api/resume",
     heroActions: [
-      { _key: "projects", label: "View Projects", href: "#projects", variant: "primary" },
-      { _key: "contact", label: "Contact Me", href: "#contact", variant: "secondary" },
+      { _key: uuid(), label: "View Projects", href: "#projects", variant: "primary" },
+      { _key: uuid(), label: "Contact Me", href: "#contact", variant: "secondary" },
     ],
   });
 
@@ -89,10 +111,7 @@ async function seed() {
     { name: "Redux Toolkit", iconKey: "redux" },
     { name: "HTML5", iconKey: "html" },
     { name: "CSS3", iconKey: "css" },
-    { name: "Framer Motion", iconKey: "react" },
-    { name: "Axios", iconKey: "javascript" },
-    { name: "React Hook Form", iconKey: "react" },
-    { name: "Shadcn UI", iconKey: "react" },
+    { name: "Framer Motion", iconKey: "framer" },
   ];
 
   const backendSkills = [
@@ -107,8 +126,9 @@ async function seed() {
 
   const toolsSkills = [
     { name: "Git", iconKey: "git" },
-    { name: "GitHub", iconKey: "git" },
+    { name: "GitHub", iconKey: "github" },
     { name: "Postman", iconKey: "backend" },
+    { name: "Axios", iconKey: "javascript" },
   ];
 
   const databaseSkills = [
@@ -166,27 +186,37 @@ async function seed() {
     });
   }
 
-  // 4. Project
+  // 4. Projects
   await createDocument({
     _type: "project",
     _id: uuid(),
-    title: "MERN Stack E-Commerce Platform",
-    slug: { _type: "slug", current: "mern-stack-ecommerce" },
+    title: "E-Commerce Store",
+    slug: { _type: "slug", current: "ecommerce-store" },
     description:
-      "A modern full-stack e-commerce platform built with MERN Stack featuring an advanced admin dashboard, secure JWT authentication, product variants (colors & sizes), real-time cart with stock validation, complete order lifecycle management, coupon-based discounts, PayPal integration, and sales analytics with charts. Built with MVC architecture, fully responsive UI, Framer Motion animations, and production-ready structure.",
+      "A modern customer-facing e-commerce application that provides a fast, secure, and responsive shopping experience with authentication, product discovery, cart management, wishlist, online payments, and order tracking.",
     techStack: [
-      "MongoDB",
-      "Express.js",
-      "React.js",
-      "Node.js",
-      "JWT",
-      "Context API",
-      "Tailwind CSS",
-      "Framer Motion",
+      "React", "Redux Toolkit", "Tailwind CSS", "Node.js",
+      "Express.js", "MongoDB", "Mongoose", "JWT Authentication",
+      "PayPal API", "Cloudinary",
     ],
-    liveUrl: "https://mern-stack-ecommerce-tau.vercel.app/",
-    githubUrl: "https://github.com/yourusername/ecommerce",
+    storeUrl: "https://mern-stack-ecommerce-tau.vercel.app/",
     order: 0,
+  });
+
+  await createDocument({
+    _type: "project",
+    _id: uuid(),
+    title: "E-Commerce Admin Dashboard",
+    slug: { _type: "slug", current: "ecommerce-admin-dashboard" },
+    description:
+      "A complete administration dashboard for managing an e-commerce platform, allowing administrators to control products, categories, orders, users, coupons, and business analytics through a responsive interface.",
+    techStack: [
+      "React", "Redux Toolkit", "Tailwind CSS", "Node.js",
+      "Express.js", "MongoDB", "Mongoose", "JWT Authentication",
+      "Cloudinary", "Chart.js",
+    ],
+    storeUrl: "https://mern-stack-ecommerce-admin-mu.vercel.app",
+    order: 1,
   });
 
   // 5. Experience (Education)

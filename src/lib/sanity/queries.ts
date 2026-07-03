@@ -41,7 +41,7 @@ export const portfolioQuery = `
     description,
     image,
     techStack,
-    liveUrl,
+    "storeUrl": storeUrl,
     githubUrl,
     order
   },
