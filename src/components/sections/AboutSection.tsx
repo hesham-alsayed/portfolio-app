@@ -23,15 +23,15 @@ export function AboutSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col gap-12 md:flex-row-reverse md:items-start"
+          className="flex flex-col gap-12 lg:flex-row-reverse lg:items-start"
         >
-          <div className="w-80">
+          <div className="hidden lg:block w-80">
             <div className="flex aspect-[4/5] items-center justify-center rounded-2xl bg-accent">
               <FaUser className="h-16 w-16 text-muted-foreground/40" />
             </div>
           </div>
 
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6 rounded-2xl border border-border bg-card p-8">
             <p className="text-sm font-medium text-muted-foreground">
               {sectionLabel || "About Me"}
             </p>
