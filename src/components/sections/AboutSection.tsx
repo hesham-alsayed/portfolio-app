@@ -17,7 +17,7 @@ export function AboutSection({
 }: AboutSectionProps) {
   return (
     <section id="about" className="px-6 py-20">
-      <div className="mx-auto max-w-screen-md">
+      <div className="mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -25,7 +25,7 @@ export function AboutSection({
           transition={{ duration: 0.6 }}
           className="flex flex-col gap-12 md:flex-row-reverse md:items-start"
         >
-          <div className="flex-1">
+          <div className="w-80">
             <div className="flex aspect-[4/5] items-center justify-center rounded-2xl bg-accent">
               <FaUser className="h-16 w-16 text-muted-foreground/40" />
             </div>
