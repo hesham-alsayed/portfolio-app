@@ -169,9 +169,16 @@ export default function AdminPage() {
   }
 
   function openEdit(doc: Doc) {
-    const { _id, _type, _rev, _createdAt, _updatedAt, ...rest } = doc;
+    const rawType = doc._type;
+    const formKey = typeMap[rawType] || rawType;
+    const fields = formFields[formKey as keyof typeof formFields];
+    const allowedKeys = new Set(fields?.map((f) => f.key) || []);
+    const clean: Doc = {};
+    for (const [k, v] of Object.entries(doc)) {
+      if (allowedKeys.has(k)) clean[k] = v;
+    }
     setEditing(doc);
-    setFormData(rest);
+    setFormData(clean);
     setModalOpen(true);
   }
 
