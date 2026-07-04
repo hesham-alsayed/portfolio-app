@@ -13,7 +13,9 @@ export const portfolioQuery = `
     projectActionLabels,
     skillCategoryLabels,
     experiencePresentLabel,
-    footerText
+    footerText,
+    projectsHeading,
+    projectsDescription
   },
   "personalInfo": *[_type == "personalInfo"][0]{
     _id,

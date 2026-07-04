@@ -53,6 +53,8 @@ export default async function HomePage() {
           <ProjectsSection
             projects={projects}
             sectionLabel={siteSettings.sectionLabels?.projects}
+            heading={siteSettings.projectsHeading}
+            description={siteSettings.projectsDescription}
             actionLabels={siteSettings.projectActionLabels}
           />
 

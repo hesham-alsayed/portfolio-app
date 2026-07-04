@@ -116,6 +116,8 @@ export interface SiteSettings {
   skillCategoryLabels?: SkillCategoryLabels;
   experiencePresentLabel?: string;
   footerText?: string;
+  projectsHeading?: string;
+  projectsDescription?: string;
 }
 
 export interface PortfolioData {
