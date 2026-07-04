@@ -182,6 +182,7 @@ export default function AdminPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Doc | null>(null);
   const [formData, setFormData] = useState<Doc>({});
+  const [aboutDoc, setAboutDoc] = useState<Doc | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -202,6 +203,21 @@ export default function AdminPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const sectionData = docs[active] as Doc[] | Doc | null | undefined;
+
+  useEffect(() => {
+    if (active === "about" && sectionData && typeof sectionData === "object" && !Array.isArray(sectionData)) {
+      setAboutDoc(sectionData);
+      const rawType = sectionData._type || "about";
+      const formKey = typeMap[rawType] || rawType;
+      const fields = formFields[formKey as keyof typeof formFields];
+      const allowedKeys = new Set(fields?.map((f) => f.key) || []);
+      const clean: Doc = {};
+      for (const [k, v] of Object.entries(sectionData)) {
+        if (allowedKeys.has(k)) clean[k] = v;
+      }
+      setFormData(clean);
+    }
+  }, [active, sectionData]);
 
   function openNew() {
     setEditing(null);
@@ -234,6 +250,23 @@ export default function AdminPage() {
       }
       await fetchData();
       setModalOpen(false);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error saving");
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleSaveAbout() {
+    setActionLoading("save");
+    try {
+      if (aboutDoc?._id) {
+        await api("about", "update", formData, aboutDoc._id);
+      } else {
+        const result = await api("about", "create", formData);
+        setAboutDoc(result.data);
+      }
+      await fetchData();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Error saving");
     } finally {
@@ -396,7 +429,34 @@ export default function AdminPage() {
               </div>
 
               {/* Content */}
-              {active === "personalInfo" || active === "siteSettings" || active === "about" ? (
+              {active === "about" ? (
+                <div className="rounded-2xl border border-foreground/10 bg-card p-6">
+                  {renderForm()}
+                  <div className="mt-6 flex justify-end gap-3">
+                    <button
+                      onClick={() => {
+                        const rawType = aboutDoc?._type || "about";
+                        const formKey = typeMap[rawType] || rawType;
+                        const fields = formFields[formKey as keyof typeof formFields];
+                        const allowedKeys = new Set(fields?.map((f) => f.key) || []);
+                        const clean: Doc = {};
+                        if (aboutDoc) { for (const [k, v] of Object.entries(aboutDoc)) { if (allowedKeys.has(k)) clean[k] = v; } setFormData(clean); }
+                      }}
+                      className="rounded-xl border border-foreground/10 px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSaveAbout}
+                      disabled={actionLoading === "save"}
+                      className="inline-flex items-center gap-2 rounded-xl bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
+                    >
+                      {actionLoading === "save" ? <Spinner /> : <FaSave />}
+                      Save
+                    </button>
+                  </div>
+                </div>
+              ) : active === "personalInfo" || active === "siteSettings" ? (
                 <div className="rounded-2xl border border-foreground/10 bg-card p-6">
                   {renderSingleItem(sectionData as Doc | null, openEdit, handleDelete, actionLoading)}
                 </div>
