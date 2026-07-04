@@ -26,8 +26,8 @@ export function ProjectsSection({
         <div className="flex flex-col gap-y-4 items-center justify-center">
           <div className="flex items-center w-full max-w-[800px] mx-auto">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent from-5% via-border via-95% to-transparent" />
-            <div className="z-10 rounded-xl border bg-primary px-4 py-1">
-              <span className="text-sm font-medium text-primary-foreground">{sectionLabel}</span>
+            <div className="z-10 rounded-xl border border-border bg-muted px-4 py-1">
+              <span className="text-sm font-medium text-foreground">{sectionLabel}</span>
             </div>
             <div className="flex-1 h-px bg-gradient-to-l from-transparent from-5% via-border via-95% to-transparent" />
           </div>
