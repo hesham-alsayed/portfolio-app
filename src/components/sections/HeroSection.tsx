@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { FaDownload, FaCode, FaEnvelope } from "react-icons/fa";
+import { FaDownload, FaCode, FaEnvelope, FaBolt } from "react-icons/fa";
 import type { PersonalInfo } from "@/types/cms";
 import { SpiderWebCanvas } from "@/components/ui/SpiderWebCanvas";
 
@@ -41,9 +41,14 @@ export function HeroSection({ personalInfo }: HeroSectionProps) {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-10 mx-auto max-w-3xl text-center"
+        className="relative z-10 mx-auto max-w-screen-md text-center"
       >
-        <motion.h1 className="whitespace-nowrap text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+        <motion.span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-4 py-1.5 text-xs font-medium text-secondary-foreground">
+          <FaBolt className="h-3 w-3" />
+          {personalInfo.role}
+        </motion.span>
+
+        <motion.h1 className="mt-6 text-4xl font-bold tracking-tight !leading-[1.2] sm:text-5xl md:text-6xl">
           {displayedText.split("").map((char, i) => (
             <span
               key={i}
@@ -55,21 +60,12 @@ export function HeroSection({ personalInfo }: HeroSectionProps) {
           ))}
         </motion.h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-4 text-lg font-medium text-muted-foreground sm:text-xl"
-        >
-          {personalInfo.role}
-        </motion.p>
-
         {personalInfo.subheadline ? (
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-            className="mt-6 mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base"
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="mt-4 text-[17px] leading-relaxed text-muted-foreground md:text-lg"
           >
             {personalInfo.subheadline}
           </motion.p>
@@ -78,17 +74,17 @@ export function HeroSection({ personalInfo }: HeroSectionProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.2 }}
-          className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
+          transition={{ duration: 0.6, delay: 1.0 }}
+          className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center"
         >
           {personalInfo.heroActions?.map((action) => (
             <a
               key={action.label}
               href={action.href}
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-foreground/20 bg-foreground px-8 py-3 text-sm font-medium text-background transition-all hover:bg-foreground/90 hover:shadow-lg hover:-translate-y-0.5 w-full sm:w-auto min-w-[160px]"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-xs transition-all hover:bg-primary/90 w-full sm:w-auto"
             >
-              {action.label === "View Projects" ? <FaCode /> : null}
-              {action.label === "Contact Me" ? <FaEnvelope /> : null}
+              {action.label === "View Projects" ? <FaCode className="h-4 w-4" /> : null}
+              {action.label === "Contact Me" ? <FaEnvelope className="h-4 w-4" /> : null}
               {action.label}
             </a>
           ))}
@@ -96,9 +92,9 @@ export function HeroSection({ personalInfo }: HeroSectionProps) {
             <a
               href={personalInfo.resumeUrl}
               download
-              className="inline-flex items-center justify-center gap-2 rounded-md border border-foreground/20 bg-background px-8 py-3 text-sm font-medium text-foreground transition-all hover:bg-muted hover:-translate-y-0.5 w-full sm:w-auto min-w-[160px]"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-input bg-background px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground w-full sm:w-auto"
             >
-              <FaDownload />
+              <FaDownload className="h-4 w-4" />
               Resume
             </a>
           ) : null}

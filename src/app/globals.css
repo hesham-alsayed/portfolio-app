@@ -7,11 +7,16 @@
   --foreground: #111111;
   --card: #f5f5f5;
   --card-foreground: #111111;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
+  --secondary: #f0f0f0;
+  --secondary-foreground: #666666;
   --muted: #f0f0f0;
   --muted-foreground: #666666;
+  --accent: #f0f0f0;
+  --accent-foreground: #111111;
   --border: #e0e0e0;
-  --accent: #111111;
-  --accent-foreground: #ffffff;
+  --input: #e0e0e0;
   --ring: #111111;
   --radius: 0.5rem;
 }
@@ -21,12 +26,17 @@
   --foreground: #f5f5f5;
   --card: #1a1a1a;
   --card-foreground: #f5f5f5;
+  --primary: #f5f5f5;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #888888;
   --muted: #1a1a1a;
   --muted-foreground: #888888;
+  --accent: #1a1a1a;
+  --accent-foreground: #f5f5f5;
   --border: #2a2a2a;
-  --accent: #ffffff;
-  --accent-foreground: #0a0a0a;
-  --ring: #ffffff;
+  --input: #2a2a2a;
+  --ring: #f5f5f5;
 }
 
 @theme inline {
@@ -34,11 +44,16 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
   --color-ring: var(--ring);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
