@@ -183,6 +183,7 @@ export default function AdminPage() {
   const [editing, setEditing] = useState<Doc | null>(null);
   const [formData, setFormData] = useState<Doc>({});
   const [aboutDoc, setAboutDoc] = useState<Doc | null>(null);
+  const [piDoc, setPiDoc] = useState<Doc | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -204,18 +205,26 @@ export default function AdminPage() {
 
   const sectionData = docs[active] as Doc[] | Doc | null | undefined;
 
+  function extractFormData(doc: Doc): Doc {
+    const rawType = doc._type || active;
+    const formKey = typeMap[rawType] || rawType;
+    const fields = formFields[formKey as keyof typeof formFields];
+    const allowedKeys = new Set(fields?.map((f) => f.key) || []);
+    const clean: Doc = {};
+    for (const [k, v] of Object.entries(doc)) {
+      if (allowedKeys.has(k)) clean[k] = v;
+    }
+    return clean;
+  }
+
   useEffect(() => {
     if (active === "about" && sectionData && typeof sectionData === "object" && !Array.isArray(sectionData)) {
       setAboutDoc(sectionData);
-      const rawType = sectionData._type || "about";
-      const formKey = typeMap[rawType] || rawType;
-      const fields = formFields[formKey as keyof typeof formFields];
-      const allowedKeys = new Set(fields?.map((f) => f.key) || []);
-      const clean: Doc = {};
-      for (const [k, v] of Object.entries(sectionData)) {
-        if (allowedKeys.has(k)) clean[k] = v;
-      }
-      setFormData(clean);
+      setFormData(extractFormData(sectionData));
+    }
+    if (active === "personalInfo" && sectionData && typeof sectionData === "object" && !Array.isArray(sectionData)) {
+      setPiDoc(sectionData);
+      setFormData(extractFormData(sectionData));
     }
   }, [active, sectionData]);
 
@@ -257,14 +266,15 @@ export default function AdminPage() {
     }
   }
 
-  async function handleSaveAbout() {
+  async function handleSaveInline(section: string, doc: Doc | null) {
     setActionLoading("save");
     try {
-      if (aboutDoc?._id) {
-        await api("about", "update", formData, aboutDoc._id);
+      if (doc?._id) {
+        await api(section, "update", formData, doc._id);
       } else {
-        const result = await api("about", "create", formData);
-        setAboutDoc(result.data);
+        const result = await api(section, "create", formData);
+        if (section === "about") setAboutDoc(result.data);
+        if (section === "personalInfo") setPiDoc(result.data);
       }
       await fetchData();
     } catch (err) {
@@ -429,25 +439,21 @@ export default function AdminPage() {
               </div>
 
               {/* Content */}
-              {active === "about" ? (
+              {active === "about" || active === "personalInfo" ? (
                 <div className="rounded-2xl border border-foreground/10 bg-card p-6">
                   {renderForm()}
                   <div className="mt-6 flex justify-end gap-3">
                     <button
                       onClick={() => {
-                        const rawType = aboutDoc?._type || "about";
-                        const formKey = typeMap[rawType] || rawType;
-                        const fields = formFields[formKey as keyof typeof formFields];
-                        const allowedKeys = new Set(fields?.map((f) => f.key) || []);
-                        const clean: Doc = {};
-                        if (aboutDoc) { for (const [k, v] of Object.entries(aboutDoc)) { if (allowedKeys.has(k)) clean[k] = v; } setFormData(clean); }
+                        const d = active === "about" ? aboutDoc : piDoc;
+                        if (d) setFormData(extractFormData(d));
                       }}
                       className="rounded-xl border border-foreground/10 px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
                     >
                       Cancel
                     </button>
                     <button
-                      onClick={handleSaveAbout}
+                      onClick={() => handleSaveInline(active, active === "about" ? aboutDoc : piDoc)}
                       disabled={actionLoading === "save"}
                       className="inline-flex items-center gap-2 rounded-xl bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
                     >
@@ -456,7 +462,7 @@ export default function AdminPage() {
                     </button>
                   </div>
                 </div>
-              ) : active === "personalInfo" || active === "siteSettings" ? (
+              ) : active === "siteSettings" ? (
                 <div className="rounded-2xl border border-foreground/10 bg-card p-6">
                   {renderSingleItem(sectionData as Doc | null, openEdit, handleDelete, actionLoading)}
                 </div>
