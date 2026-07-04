@@ -184,6 +184,10 @@ export default function AdminPage() {
   const [formData, setFormData] = useState<Doc>({});
   const [aboutDoc, setAboutDoc] = useState<Doc | null>(null);
   const [piDoc, setPiDoc] = useState<Doc | null>(null);
+  const [ssDoc, setSsDoc] = useState<Doc | null>(null);
+  const [projLabel, setProjLabel] = useState("");
+  const [projHeading, setProjHeading] = useState("");
+  const [projDesc, setProjDesc] = useState("");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -204,6 +208,15 @@ export default function AdminPage() {
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const sectionData = docs[active] as Doc[] | Doc | null | undefined;
+
+  useEffect(() => {
+    if (active === "projects") {
+      const ss = docs.siteSettings as Doc | null | undefined;
+      setProjLabel(ss?.sectionLabels?.projects ?? "");
+      setProjHeading(ss?.projectsHeading ?? "");
+      setProjDesc(ss?.projectsDescription ?? "");
+    }
+  }, [active, docs]);
 
   function extractFormData(doc: Doc): Doc {
     const rawType = doc._type || active;
@@ -227,6 +240,13 @@ export default function AdminPage() {
   useEffect(() => {
     if (active === "personalInfo" && sectionData && typeof sectionData === "object") {
       setPiDoc(sectionData);
+      setFormData(extractFormData(sectionData));
+    }
+  }, [active, sectionData]);
+
+  useEffect(() => {
+    if (active === "siteSettings" && sectionData && typeof sectionData === "object") {
+      setSsDoc(sectionData);
       setFormData(extractFormData(sectionData));
     }
   }, [active, sectionData]);
@@ -278,7 +298,24 @@ export default function AdminPage() {
         const result = await api(section, "create", formData);
         if (section === "about") setAboutDoc(result.data);
         if (section === "personalInfo") setPiDoc(result.data);
+        if (section === "siteSettings") setSsDoc(result.data);
       }
+      await fetchData();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error saving");
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleSaveProjectsConfig() {
+    setActionLoading("projConfig");
+    try {
+      const ss = docs.siteSettings as Doc | null | undefined;
+      if (!ss?._id) return;
+      const sectionLabels = { ...(ss.sectionLabels || {}), projects: projLabel };
+      const payload: Doc = { sectionLabels, projectsHeading: projHeading, projectsDescription: projDesc };
+      await api("siteSettings", "update", payload, ss._id);
       await fetchData();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Error saving");
@@ -442,13 +479,13 @@ export default function AdminPage() {
               </div>
 
               {/* Content */}
-              {active === "about" || active === "personalInfo" ? (
+              {active === "about" || active === "personalInfo" || active === "siteSettings" ? (
                 <div className="rounded-2xl border border-foreground/10 bg-card p-6">
                   {renderForm()}
                   <div className="mt-6 flex justify-end gap-3">
                     <button
                       onClick={() => {
-                        const d = active === "about" ? aboutDoc : piDoc;
+                        const d = active === "about" ? aboutDoc : active === "personalInfo" ? piDoc : ssDoc;
                         if (d) setFormData(extractFormData(d));
                       }}
                       className="rounded-xl border border-foreground/10 px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
@@ -456,7 +493,7 @@ export default function AdminPage() {
                       Cancel
                     </button>
                     <button
-                      onClick={() => handleSaveInline(active, active === "about" ? aboutDoc : piDoc)}
+                      onClick={() => handleSaveInline(active, active === "about" ? aboutDoc : active === "personalInfo" ? piDoc : ssDoc)}
                       disabled={actionLoading === "save"}
                       className="inline-flex items-center gap-2 rounded-xl bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
                     >
@@ -465,12 +502,37 @@ export default function AdminPage() {
                     </button>
                   </div>
                 </div>
-              ) : active === "siteSettings" ? (
-                <div className="rounded-2xl border border-foreground/10 bg-card p-6">
-                  {renderSingleItem(sectionData as Doc | null, openEdit, handleDelete, actionLoading)}
-                </div>
               ) : (
                 <div className="space-y-4">
+                  {active === "projects" ? (
+                    <div className="rounded-2xl border border-foreground/10 bg-card p-5">
+                      <p className="mb-3 text-xs font-medium text-muted-foreground">Section Text</p>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="mb-1 block text-xs text-muted-foreground">Section Label</label>
+                          <input value={projLabel} onChange={(e) => setProjLabel(e.target.value)} className="w-full rounded-lg border border-foreground/10 bg-muted/50 px-3 py-2 text-sm text-foreground outline-none focus:border-foreground/30" />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs text-muted-foreground">Heading</label>
+                          <input value={projHeading} onChange={(e) => setProjHeading(e.target.value)} className="w-full rounded-lg border border-foreground/10 bg-muted/50 px-3 py-2 text-sm text-foreground outline-none focus:border-foreground/30" />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs text-muted-foreground">Description</label>
+                          <textarea value={projDesc} onChange={(e) => setProjDesc(e.target.value)} rows={2} className="w-full rounded-lg border border-foreground/10 bg-muted/50 px-3 py-2 text-sm text-foreground outline-none focus:border-foreground/30" />
+                        </div>
+                      </div>
+                      <div className="mt-3 flex justify-end">
+                        <button
+                          onClick={handleSaveProjectsConfig}
+                          disabled={actionLoading === "projConfig"}
+                          className="inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-xs font-semibold text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
+                        >
+                          {actionLoading === "projConfig" ? <Spinner /> : <FaSave />}
+                          Save Section Text
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
                   {(sectionData as Doc[] | null)?.length === 0 ? (
                     <p className="py-12 text-center text-sm text-muted-foreground">No items yet.</p>
                   ) : null}

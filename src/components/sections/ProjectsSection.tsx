@@ -34,7 +34,6 @@ export function ProjectsSection({
   description,
   actionLabels,
 }: ProjectsSectionProps) {
-  if (!sectionLabel) return null;
 
   return (
     <section id="projects" className="px-6 py-24">
@@ -70,7 +69,7 @@ export function ProjectsSection({
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mt-16 grid gap-8 md:grid-cols-2"
+          className="mx-auto mt-16 grid max-w-2xl gap-8"
         >
           {projects.map((project) => (
             <motion.div
