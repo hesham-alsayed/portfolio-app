@@ -118,6 +118,8 @@ export interface SiteSettings {
   footerText?: string;
   projectsHeading?: string;
   projectsDescription?: string;
+  experienceHeading?: string;
+  experienceDescription?: string;
 }
 
 export interface PortfolioData {

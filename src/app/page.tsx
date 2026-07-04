@@ -67,6 +67,8 @@ export default async function HomePage() {
           <ExperienceSection
             experience={experience}
             sectionLabel={siteSettings.sectionLabels?.experience}
+            heading={siteSettings.experienceHeading}
+            description={siteSettings.experienceDescription}
             presentLabel={siteSettings.experiencePresentLabel}
           />
 

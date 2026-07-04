@@ -1,80 +1,79 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { FaGraduationCap, FaBriefcase } from "react-icons/fa";
+import { FiCalendar, FiBriefcase } from "react-icons/fi";
 import type { Experience } from "@/types/cms";
-import { formatExperienceRange } from "@/lib/utils";
 
 interface ExperienceSectionProps {
   experience: Experience[];
   sectionLabel?: string;
+  heading?: string;
+  description?: string;
   presentLabel?: string;
+}
+
+function formatDate(startDate: string, endDate?: string, isCurrent?: boolean, presentLabel?: string) {
+  const s = startDate;
+  const e = isCurrent ? (presentLabel || "Present") : (endDate || "");
+  return e ? `${s} - ${e}` : s;
 }
 
 export function ExperienceSection({
   experience,
   sectionLabel,
-  presentLabel,
+  heading,
+  description,
 }: ExperienceSectionProps) {
-  if (!sectionLabel) return null;
 
   return (
-    <section id="experience" className="px-6 py-24">
-      <div className="mx-auto max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center"
-        >
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+    <section id="experience" className="relative px-6 py-20">
+      <div className="mx-auto max-w-screen-md">
+        <div className="mb-12 text-center">
+          <p className="mb-4 inline-flex items-center rounded-md border border-transparent bg-secondary px-2 py-0.5 text-xs font-medium text-secondary-foreground">
             {sectionLabel}
-          </h2>
-          <div className="mx-auto mt-3 h-px w-16 bg-foreground/20" />
-        </motion.div>
+          </p>
 
-        <div className="mt-16 space-y-8">
+          {heading ? (
+            <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
+              {heading}
+            </h2>
+          ) : null}
+
+          {description ? (
+            <p className="mt-2 text-lg text-muted-foreground sm:mt-4">
+              {description}
+            </p>
+          ) : null}
+        </div>
+
+        <div className="space-y-0">
           {experience.map((item, index) => (
-            <motion.div
+            <div
               key={item._id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="pb-8"
+              className={`relative pl-8 ${index < experience.length - 1 ? "pb-12" : ""}`}
             >
-              <div className="flex items-start gap-4">
-                <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border bg-muted">
-                  {item.isCurrent ? (
-                    <FaBriefcase className="text-sm text-muted-foreground" />
-                  ) : (
-                    <FaGraduationCap className="text-sm text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                    <h3 className="text-lg font-semibold">{item.role}</h3>
-                    <span className="text-sm text-muted-foreground">
-                      {item.company}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {formatExperienceRange(
-                      item.startDate,
-                      item.endDate,
-                      item.isCurrent,
-                      presentLabel,
-                    )}
-                  </p>
-                  {item.description ? (
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                      {item.description}
-                    </p>
-                  ) : null}
-                </div>
+              <div className="absolute left-0 top-2.5 h-full w-[2px] bg-muted">
+                <div className="absolute -left-[5px] top-0 h-3 w-3 rounded-full border-2 border-primary bg-background" />
               </div>
-            </motion.div>
+
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent">
+                    <FiBriefcase className="size-5 text-muted-foreground" />
+                  </div>
+                  <span className="text-lg font-semibold">{item.company}</span>
+                </div>
+
+                <div>
+                  <h3 className="text-xl font-medium">{item.role}</h3>
+                  <div className="mt-1 flex items-center gap-2 text-sm">
+                    <FiCalendar className="size-4" />
+                    <span>{formatDate(item.startDate, item.endDate, item.isCurrent)}</span>
+                  </div>
+                </div>
+
+                <p className="text-muted-foreground">{item.description}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>

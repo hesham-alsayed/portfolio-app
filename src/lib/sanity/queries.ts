@@ -15,7 +15,9 @@ export const portfolioQuery = `
     experiencePresentLabel,
     footerText,
     projectsHeading,
-    projectsDescription
+    projectsDescription,
+    experienceHeading,
+    experienceDescription
   },
   "personalInfo": *[_type == "personalInfo"][0]{
     _id,

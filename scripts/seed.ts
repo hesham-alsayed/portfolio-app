@@ -75,6 +75,8 @@ async function seed() {
     skillCategoryLabels: {},
     projectsHeading: "Featured Work",
     projectsDescription: "Showcasing some of my best projects and technical achievements",
+    experienceHeading: "Professional Journey",
+    experienceDescription: "A timeline of my professional growth and key achievements",
     experiencePresentLabel: "Present",
     footerText: "© 2026 Hisham Al Sayed Gomaa. Built with Next.js & Sanity.",
   });

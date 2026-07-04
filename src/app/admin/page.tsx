@@ -188,6 +188,9 @@ export default function AdminPage() {
   const [projLabel, setProjLabel] = useState("");
   const [projHeading, setProjHeading] = useState("");
   const [projDesc, setProjDesc] = useState("");
+  const [expLabel, setExpLabel] = useState("");
+  const [expHeading, setExpHeading] = useState("");
+  const [expDesc, setExpDesc] = useState("");
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -215,6 +218,12 @@ export default function AdminPage() {
       setProjLabel(ss?.sectionLabels?.projects ?? "");
       setProjHeading(ss?.projectsHeading ?? "");
       setProjDesc(ss?.projectsDescription ?? "");
+    }
+    if (active === "experience") {
+      const ss = docs.siteSettings as Doc | null | undefined;
+      setExpLabel(ss?.sectionLabels?.experience ?? "");
+      setExpHeading(ss?.experienceHeading ?? "");
+      setExpDesc(ss?.experienceDescription ?? "");
     }
   }, [active, docs]);
 
@@ -315,6 +324,22 @@ export default function AdminPage() {
       if (!ss?._id) return;
       const sectionLabels = { ...(ss.sectionLabels || {}), projects: projLabel };
       const payload: Doc = { sectionLabels, projectsHeading: projHeading, projectsDescription: projDesc };
+      await api("siteSettings", "update", payload, ss._id);
+      await fetchData();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Error saving");
+    } finally {
+      setActionLoading(null);
+    }
+  }
+
+  async function handleSaveExperienceConfig() {
+    setActionLoading("expConfig");
+    try {
+      const ss = docs.siteSettings as Doc | null | undefined;
+      if (!ss?._id) return;
+      const sectionLabels = { ...(ss.sectionLabels || {}), experience: expLabel };
+      const payload: Doc = { sectionLabels, experienceHeading: expHeading, experienceDescription: expDesc };
       await api("siteSettings", "update", payload, ss._id);
       await fetchData();
     } catch (err) {
@@ -533,6 +558,35 @@ export default function AdminPage() {
                       </div>
                     </div>
                   ) : null}
+                  {active === "experience" ? (
+                    <div className="rounded-2xl border border-foreground/10 bg-card p-5">
+                      <p className="mb-3 text-xs font-medium text-muted-foreground">Section Text</p>
+                      <div className="space-y-3">
+                        <div>
+                          <label className="mb-1 block text-xs text-muted-foreground">Section Label</label>
+                          <input value={expLabel} onChange={(e) => setExpLabel(e.target.value)} className="w-full rounded-lg border border-foreground/10 bg-muted/50 px-3 py-2 text-sm text-foreground outline-none focus:border-foreground/30" />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs text-muted-foreground">Heading</label>
+                          <input value={expHeading} onChange={(e) => setExpHeading(e.target.value)} className="w-full rounded-lg border border-foreground/10 bg-muted/50 px-3 py-2 text-sm text-foreground outline-none focus:border-foreground/30" />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs text-muted-foreground">Description</label>
+                          <textarea value={expDesc} onChange={(e) => setExpDesc(e.target.value)} rows={2} className="w-full rounded-lg border border-foreground/10 bg-muted/50 px-3 py-2 text-sm text-foreground outline-none focus:border-foreground/30" />
+                        </div>
+                      </div>
+                      <div className="mt-3 flex justify-end">
+                        <button
+                          onClick={handleSaveExperienceConfig}
+                          disabled={actionLoading === "expConfig"}
+                          className="inline-flex items-center gap-2 rounded-lg bg-foreground px-4 py-2 text-xs font-semibold text-background transition-all hover:bg-foreground/90 disabled:opacity-50"
+                        >
+                          {actionLoading === "expConfig" ? <Spinner /> : <FaSave />}
+                          Save Section Text
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
                   {(sectionData as Doc[] | null)?.length === 0 ? (
                     <p className="py-12 text-center text-sm text-muted-foreground">No items yet.</p>
                   ) : null}
@@ -745,5 +799,7 @@ const formFields: Record<string, { key: string; label: string; type: string; pla
     { key: "experiencePresentLabel", label: "Present Label", type: "text" },
     { key: "projectsHeading", label: "Projects Heading", type: "text" },
     { key: "projectsDescription", label: "Projects Description", type: "textarea" },
+    { key: "experienceHeading", label: "Experience Heading", type: "text" },
+    { key: "experienceDescription", label: "Experience Description", type: "textarea" },
   ],
 };
