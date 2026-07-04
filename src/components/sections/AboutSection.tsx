@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FaGithub, FaDownload, FaUser } from "react-icons/fa";
+import { FaGithub, FaDownload, FaUser, FaMapMarkerAlt } from "react-icons/fa";
 import type { About } from "@/types/cms";
 
 interface AboutSectionProps {
@@ -44,9 +44,22 @@ export function AboutSection({ about, githubUrl }: AboutSectionProps) {
               {about.heading}
             </h2>
 
+            {about.location ? (
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <FaMapMarkerAlt className="h-3.5 w-3.5" />
+                {about.location}
+              </p>
+            ) : null}
+
             <p className="text-lg leading-relaxed text-muted-foreground">
               {about.body}
             </p>
+
+            {about.bio ? (
+              <p className="text-base leading-relaxed text-muted-foreground/80">
+                {about.bio}
+              </p>
+            ) : null}
 
             <div className="flex flex-wrap gap-3 pt-2">
               {(b1Label === "View Github" ? githubUrl : about.button1Url) ? (

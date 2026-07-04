@@ -21,9 +21,7 @@ export const portfolioQuery = `
     role,
     headline,
     subheadline,
-    bio,
     email,
-    location,
     resumeUrl,
     heroActions
   },
@@ -72,6 +70,8 @@ export const portfolioQuery = `
     sectionName,
     heading,
     body,
+    bio,
+    location,
     imageUrl,
     button1Label,
     button1Url,

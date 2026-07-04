@@ -14,9 +14,7 @@ export interface PersonalInfo {
   role: string;
   headline: string;
   subheadline?: string;
-  bio: string;
   email?: string;
-  location?: string;
   resumeUrl?: string;
   heroActions?: HeroAction[];
 }
@@ -142,6 +140,8 @@ export interface About {
   sectionName: string;
   heading: string;
   body: string;
+  bio?: string;
+  location?: string;
   imageUrl?: string;
   button1Label: string;
   button1Url: string;

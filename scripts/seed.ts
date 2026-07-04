@@ -86,9 +86,7 @@ async function seed() {
     headline: "Hi there, I'm Hisham",
     subheadline:
       "Passionate Full Stack Developer focused on building scalable, modern, and high-performance web applications using MERN Stack technologies. I specialize in React, Node.js, Express, and MongoDB — delivering complete end-to-end solutions with clean architecture and responsive design.",
-    bio: "MERN Stack Developer experienced in building full-stack web applications using React, Node.js, Express, and MongoDB. Strong knowledge of REST APIs, authentication, and state management. Focused on performance, scalability, and clean code. Quick to adapt to new technologies and passionate about building scalable applications that solve real-world problems. Effective communicator and team player with strong time management skills.",
     email: "heshamelsauied@gmail.com",
-    location: "Al Sharqiya, Egypt",
     resumeUrl: "/api/resume",
     heroActions: [
       { _key: uuid(), label: "View Projects", href: "#projects", variant: "primary" },
@@ -252,6 +250,8 @@ async function seed() {
     sectionName: "About Me",
     heading: "Passionate about creating impactful web experiences",
     body: "With over 5 years of experience in full-stack development, I specialize in building scalable web applications using modern technologies. My expertise includes React, Node.js, and cloud architecture. I'm passionate about creating elegant solutions to complex problems and sharing knowledge with the developer community.",
+    bio: "I thrive in collaborative environments and enjoy turning complex problems into simple, beautiful designs. When I'm not coding, you'll find me exploring new tech, writing technical articles, or contributing to open-source projects.",
+    location: "Cairo, Egypt",
     button1Label: "View Github",
     button1Url: "https://github.com/yourusername",
     button2Label: "Download CV",

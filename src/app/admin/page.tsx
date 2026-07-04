@@ -633,9 +633,7 @@ const formFields: Record<string, { key: string; label: string; type: string; pla
     { key: "role", label: "Role", type: "text" },
     { key: "headline", label: "Headline", type: "text" },
     { key: "subheadline", label: "Subheadline", type: "textarea" },
-    { key: "bio", label: "Bio", type: "textarea", rows: 5 },
     { key: "email", label: "Email", type: "text" },
-    { key: "location", label: "Location", type: "text" },
     { key: "resumeUrl", label: "Resume URL", type: "text" },
   ],
   skill: [
@@ -647,6 +645,8 @@ const formFields: Record<string, { key: string; label: string; type: string; pla
     { key: "sectionName", label: "Section Name", type: "text" },
     { key: "heading", label: "Heading", type: "text" },
     { key: "body", label: "Body Text", type: "textarea", rows: 5 },
+    { key: "bio", label: "Bio", type: "textarea", rows: 5 },
+    { key: "location", label: "Location", type: "text" },
     { key: "imageUrl", label: "Image", type: "imageUpload" },
     { key: "button1Label", label: "Button 1 Label", type: "text" },
     { key: "button1Url", label: "Button 1 URL", type: "text" },
