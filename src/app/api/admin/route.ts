@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "type and action required" }, { status: 400 });
     }
 
-    const validTypes = ["personalInfo", "skill", "project", "experience", "socialLink", "siteSettings", "category"];
+    const validTypes = ["personalInfo", "skill", "project", "experience", "socialLink", "siteSettings", "category", "about"];
 
     if (!validTypes.includes(type)) {
       return NextResponse.json({ error: `Invalid type: ${type}` }, { status: 400 });

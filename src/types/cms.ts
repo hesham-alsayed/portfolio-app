@@ -128,12 +128,25 @@ export interface PortfolioData {
   experience: Experience[];
   socialLinks: SocialLink[];
   categories: Category[];
+  about: About | null;
 }
 
 export interface Category {
   _id: string;
   name: string;
   order?: number;
+}
+
+export interface About {
+  _id: string;
+  sectionName: string;
+  heading: string;
+  body: string;
+  imageUrl?: string;
+  button1Label: string;
+  button1Url: string;
+  button2Label: string;
+  button2Url: string;
 }
 
 export interface ContactFormPayload {

@@ -66,6 +66,17 @@ export const portfolioQuery = `
     _id,
     name,
     order
+  },
+  "about": *[_type == "about"][0]{
+    _id,
+    sectionName,
+    heading,
+    body,
+    imageUrl,
+    button1Label,
+    button1Url,
+    button2Label,
+    button2Url
   }
 }
 `;

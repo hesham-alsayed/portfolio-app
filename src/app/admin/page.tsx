@@ -4,17 +4,18 @@ import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   FaUser, FaCode, FaProjectDiagram, FaGraduationCap, FaShareAlt, FaCog,
-  FaPlus, FaEdit, FaTrash, FaSave, FaSpinner, FaTags,
+  FaPlus, FaEdit, FaTrash, FaSave, FaSpinner, FaTags, FaInfoCircle, FaImage,
 } from "react-icons/fa";
 import { Modal } from "@/components/admin/Modal";
 import {
   Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
 } from "@/components/ui/select";
 
-type Section = "personalInfo" | "skills" | "projects" | "experience" | "socialLinks" | "siteSettings" | "categories";
+type Section = "personalInfo" | "skills" | "projects" | "experience" | "socialLinks" | "siteSettings" | "categories" | "about";
 
 const sections: { key: Section; label: string; icon: React.ReactNode }[] = [
   { key: "personalInfo", label: "Personal Info", icon: <FaUser /> },
+  { key: "about", label: "About", icon: <FaInfoCircle /> },
   { key: "skills", label: "Skills", icon: <FaCode /> },
   { key: "projects", label: "Projects", icon: <FaProjectDiagram /> },
   { key: "experience", label: "Experience", icon: <FaGraduationCap /> },
@@ -51,6 +52,7 @@ const typeMap: Record<string, string> = {
   personalInfo: "personalInfo",
   siteSettings: "siteSettings",
   categories: "category",
+  about: "about",
 };
 
 async function api(section: string, action: string, data?: Doc, id?: string, ids?: string[]) {
@@ -77,6 +79,45 @@ function Badge({ children }: { children: React.ReactNode }) {
 // ===================================================================
 // Admin Dashboard
 // ===================================================================
+// ─── Image Upload ───
+function ImageUpload({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      onChange(json.url);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      {value ? (
+        <div className="relative aspect-[4/5] w-full max-w-[200px] overflow-hidden rounded-xl bg-accent">
+          <img src={value} alt="Preview" className="h-full w-full object-cover" />
+          <button onClick={() => onChange("")} className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs text-white">&times;</button>
+        </div>
+      ) : null}
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-foreground/10 bg-muted/50 px-3 py-2 text-sm text-foreground hover:bg-muted">
+        {uploading ? <Spinner /> : <FaImage />}
+        {uploading ? "Uploading..." : "Upload Image"}
+        <input type="file" accept="image/*" onChange={handleFile} className="hidden" disabled={uploading} />
+      </label>
+    </div>
+  );
+}
+
 // ─── Category Select ───
 function CategorySelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const [cats, setCats] = useState<Doc[]>([]);
@@ -145,7 +186,7 @@ export default function AdminPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     const result: Record<string, Doc[] | Doc | null> = {};
-    const allSections = ["personalInfo", "skills", "projects", "experience", "socialLinks", "categories", "siteSettings"];
+    const allSections = ["personalInfo", "about", "skills", "projects", "experience", "socialLinks", "categories", "siteSettings"];
     try {
       const res = await Promise.all(allSections.map((s) => api(s, "fetch")));
       for (let i = 0; i < allSections.length; i++) {
@@ -235,6 +276,14 @@ export default function AdminPage() {
     if (field.type === "categorySelect") {
       return (
         <CategorySelect
+          value={formData[field.key] ?? ""}
+          onChange={(v) => setFormData({ ...formData, [field.key]: v })}
+        />
+      );
+    }
+    if (field.type === "imageUpload") {
+      return (
+        <ImageUpload
           value={formData[field.key] ?? ""}
           onChange={(v) => setFormData({ ...formData, [field.key]: v })}
         />
@@ -335,7 +384,7 @@ export default function AdminPage() {
                 <h1 className="text-2xl font-bold text-foreground">
                   {sections.find((s) => s.key === active)?.label}
                 </h1>
-                {active !== "personalInfo" && active !== "siteSettings" ? (
+                {active !== "personalInfo" && active !== "siteSettings" && active !== "about" ? (
                   <button
                     onClick={openNew}
                     className="inline-flex items-center gap-2 rounded-xl bg-foreground px-4 py-2.5 text-sm font-semibold text-background transition-all hover:bg-foreground/90 hover:-translate-y-0.5"
@@ -347,7 +396,7 @@ export default function AdminPage() {
               </div>
 
               {/* Content */}
-              {active === "personalInfo" || active === "siteSettings" ? (
+              {active === "personalInfo" || active === "siteSettings" || active === "about" ? (
                 <div className="rounded-2xl border border-foreground/10 bg-card p-6">
                   {renderSingleItem(sectionData as Doc | null, openEdit, handleDelete, actionLoading)}
                 </div>
@@ -524,6 +573,16 @@ const formFields: Record<string, { key: string; label: string; type: string; pla
     { key: "name", label: "Name", type: "text" },
     { key: "iconKey", label: "Icon Key", type: "text" },
     { key: "category", label: "Category", type: "categorySelect" },
+  ],
+  about: [
+    { key: "sectionName", label: "Section Name", type: "text" },
+    { key: "heading", label: "Heading", type: "text" },
+    { key: "body", label: "Body Text", type: "textarea", rows: 5 },
+    { key: "imageUrl", label: "Image", type: "imageUpload" },
+    { key: "button1Label", label: "Button 1 Label", type: "text" },
+    { key: "button1Url", label: "Button 1 URL", type: "text" },
+    { key: "button2Label", label: "Button 2 Label", type: "text" },
+    { key: "button2Url", label: "Button 2 URL", type: "text" },
   ],
   category: [
     { key: "name", label: "Name", type: "text" },

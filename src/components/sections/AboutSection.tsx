@@ -2,19 +2,19 @@
 
 import { motion } from "framer-motion";
 import { FaGithub, FaDownload, FaUser } from "react-icons/fa";
-import type { PersonalInfo } from "@/types/cms";
+import type { About } from "@/types/cms";
 
 interface AboutSectionProps {
-  personalInfo: PersonalInfo;
+  about: About | null;
   githubUrl?: string;
-  sectionLabel?: string;
 }
 
-export function AboutSection({
-  personalInfo,
-  githubUrl,
-  sectionLabel,
-}: AboutSectionProps) {
+export function AboutSection({ about, githubUrl }: AboutSectionProps) {
+  if (!about) return null;
+
+  const b1Label = about.button1Label || "View Github";
+  const b2Label = about.button2Label || "Download CV";
+
   return (
     <section id="about" className="px-6 py-20">
       <div className="mx-auto max-w-5xl">
@@ -26,44 +26,47 @@ export function AboutSection({
           className="flex flex-col gap-12 lg:flex-row-reverse lg:items-start"
         >
           <div className="hidden lg:block w-80">
-            <div className="flex aspect-[4/5] items-center justify-center rounded-2xl bg-accent">
-              <FaUser className="h-16 w-16 text-muted-foreground/40" />
+            <div className="flex aspect-[4/5] items-center justify-center overflow-hidden rounded-2xl bg-accent">
+              {about.imageUrl ? (
+                <img src={about.imageUrl} alt={about.sectionName} className="h-full w-full object-cover" />
+              ) : (
+                <FaUser className="h-16 w-16 text-muted-foreground/40" />
+              )}
             </div>
           </div>
 
-          <div className="flex-1 space-y-6 rounded-2xl border border-border bg-card p-8">
-            <p className="text-sm font-medium text-muted-foreground">
-              {sectionLabel || "About Me"}
+          <div className="flex-1 space-y-6">
+            <p className="inline-flex items-center rounded-full bg-card px-4 py-1.5 text-xs font-medium text-muted-foreground ring-1 ring-border">
+              {about.sectionName || "About Me"}
             </p>
 
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              Passionate about creating impactful web experiences
+              {about.heading}
             </h2>
 
             <p className="text-lg leading-relaxed text-muted-foreground">
-              {personalInfo.bio}
+              {about.body}
             </p>
 
             <div className="flex flex-wrap gap-3 pt-2">
-              {githubUrl ? (
+              {(b1Label === "View Github" ? githubUrl : about.button1Url) ? (
                 <a
-                  href={githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href={b1Label === "View Github" ? (githubUrl || about.button1Url) : about.button1Url}
+                  target={b1Label === "View Github" ? "_blank" : undefined}
+                  rel={b1Label === "View Github" ? "noopener noreferrer" : undefined}
                   className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-xs transition-all hover:bg-primary/90"
                 >
-                  <FaGithub className="h-4 w-4" />
-                  View Github
+                  {b1Label === "View Github" ? <FaGithub className="h-4 w-4" /> : null}
+                  {b1Label}
                 </a>
               ) : null}
-              {personalInfo.resumeUrl ? (
+              {about.button2Url ? (
                 <a
-                  href={personalInfo.resumeUrl}
-                  download
+                  href={about.button2Url}
                   className="inline-flex items-center gap-2 rounded-full border border-input bg-background px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground"
                 >
-                  <FaDownload className="h-4 w-4" />
-                  Download CV
+                  {b2Label === "Download CV" ? <FaDownload className="h-4 w-4" /> : null}
+                  {b2Label}
                 </a>
               ) : null}
             </div>

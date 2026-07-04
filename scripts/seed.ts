@@ -10,7 +10,7 @@ const client = createClient({
   token: process.env.SANITY_WRITE_TOKEN,
 });
 
-const TYPES = ["siteSettings", "personalInfo", "skill", "project", "experience", "socialLink", "category"];
+const TYPES = ["siteSettings", "personalInfo", "skill", "project", "experience", "socialLink", "category", "about"];
 
 async function deleteAll() {
   console.log("🗑️  Deleting existing documents...\n");
@@ -245,7 +245,20 @@ async function seed() {
     });
   }
 
-  // 7. Categories
+  // 7. About
+  await createDocument({
+    _type: "about",
+    _id: uuid(),
+    sectionName: "About Me",
+    heading: "Passionate about creating impactful web experiences",
+    body: "With over 5 years of experience in full-stack development, I specialize in building scalable web applications using modern technologies. My expertise includes React, Node.js, and cloud architecture. I'm passionate about creating elegant solutions to complex problems and sharing knowledge with the developer community.",
+    button1Label: "View Github",
+    button1Url: "https://github.com/yourusername",
+    button2Label: "Download CV",
+    button2Url: "/api/resume",
+  });
+
+  // 8. Categories
   const categories = [
     { name: "Frontend Development", order: 0 },
     { name: "Backend Development", order: 1 },

@@ -31,7 +31,7 @@ export default async function HomePage() {
     return <main className="min-h-screen" />;
   }
 
-  const { siteSettings, personalInfo, skills, projects, experience, socialLinks, categories } =
+  const { siteSettings, personalInfo, skills, projects, experience, socialLinks, categories, about } =
     data;
 
   const githubUrl = socialLinks?.find((l) => l.platform.toLowerCase() === "github")?.url;
@@ -48,11 +48,7 @@ export default async function HomePage() {
         <main>
           <HeroSection personalInfo={personalInfo} />
 
-          <AboutSection
-            personalInfo={personalInfo}
-            githubUrl={githubUrl}
-            sectionLabel={siteSettings.sectionLabels?.about}
-          />
+          <AboutSection about={about} githubUrl={githubUrl} />
 
           <ProjectsSection
             projects={projects}
