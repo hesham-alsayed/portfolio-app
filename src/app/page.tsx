@@ -50,6 +50,7 @@ export default async function HomePage() {
 
           <AboutSection
             personalInfo={personalInfo}
+            githubUrl={githubUrl}
             sectionLabel={siteSettings.sectionLabels?.about}
           />
 
