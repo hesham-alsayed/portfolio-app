@@ -34,11 +34,14 @@ export default async function HomePage() {
   const { siteSettings, personalInfo, skills, projects, experience, socialLinks, categories } =
     data;
 
+  const githubUrl = socialLinks?.find((l) => l.platform.toLowerCase() === "github")?.url;
+
   return (
     <>
       <Header
         siteTitle={siteSettings.siteTitle}
         sectionLabels={siteSettings.sectionLabels}
+        githubUrl={githubUrl}
       />
 
       <PageTransition>

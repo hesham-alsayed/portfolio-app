@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useRef } from "react";
 import { motion } from "framer-motion";
-import { FaDownload, FaCode, FaEnvelope, FaBolt } from "react-icons/fa";
+import { FaArrowDown, FaBolt } from "react-icons/fa";
 import type { PersonalInfo } from "@/types/cms";
 import { SpiderWebCanvas } from "@/components/ui/SpiderWebCanvas";
 
@@ -11,23 +11,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ personalInfo }: HeroSectionProps) {
-  const [displayedText, setDisplayedText] = useState("");
   const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const text = personalInfo.headline || personalInfo.name;
-    let index = 0;
-    setDisplayedText("");
-    const interval = setInterval(() => {
-      if (index < text.length) {
-        setDisplayedText(text.slice(0, index + 1));
-        index++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 60);
-    return () => clearInterval(interval);
-  }, [personalInfo.headline, personalInfo.name]);
 
   return (
     <section
@@ -43,21 +27,19 @@ export function HeroSection({ personalInfo }: HeroSectionProps) {
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="relative z-10 mx-auto max-w-screen-md text-center"
       >
-        <motion.span className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-4 py-1.5 text-xs font-medium text-secondary-foreground">
+        <motion.span className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground">
           <FaBolt className="h-3 w-3" />
           {personalInfo.role}
         </motion.span>
 
-        <motion.h1 className="mt-6 text-4xl font-bold tracking-tight !leading-[1.2] sm:text-5xl md:text-6xl">
-          {displayedText.split("").map((char, i) => (
-            <span
-              key={i}
-              className="inline-block animate-letter"
-              style={{ animationDelay: `${i * 0.035}s` }}
-            >
-              {char === " " ? "\u00A0" : char}
-            </span>
-          ))}
+        <motion.p className="mt-8 text-lg font-semibold text-foreground sm:text-xl">
+          Hi, I&apos;m {personalInfo.name}
+        </motion.p>
+
+        <motion.h1 className="mt-2 text-4xl font-bold tracking-tight !leading-[1.15] sm:text-5xl md:text-6xl lg:text-7xl">
+          Building Scalable & Engaging
+          <br />
+          Web Experiences
         </motion.h1>
 
         {personalInfo.subheadline ? (
@@ -75,29 +57,15 @@ export function HeroSection({ personalInfo }: HeroSectionProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.0 }}
-          className="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center"
+          className="mt-10 flex justify-center"
         >
-          {personalInfo.heroActions?.map((action) => (
-            <a
-              key={action.label}
-              href={action.href}
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-xs transition-all hover:bg-primary/90 w-full sm:w-auto"
-            >
-              {action.label === "View Projects" ? <FaCode className="h-4 w-4" /> : null}
-              {action.label === "Contact Me" ? <FaEnvelope className="h-4 w-4" /> : null}
-              {action.label}
-            </a>
-          ))}
-          {personalInfo.resumeUrl ? (
-            <a
-              href={personalInfo.resumeUrl}
-              download
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-input bg-background px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground w-full sm:w-auto"
-            >
-              <FaDownload className="h-4 w-4" />
-              Resume
-            </a>
-          ) : null}
+          <a
+            href="#projects"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-medium text-primary-foreground shadow-xs transition-all hover:bg-primary/90"
+          >
+            See What I Do
+            <FaArrowDown className="h-4 w-4" />
+          </a>
         </motion.div>
       </motion.div>
     </section>

@@ -3,16 +3,18 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { SectionLabels } from "@/types/cms";
+import { FaGithub } from "react-icons/fa";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 
 interface HeaderProps {
   siteTitle?: string;
   sectionLabels?: SectionLabels;
+  githubUrl?: string;
 }
 
 const sections = ["about", "projects", "skills", "experience", "contact"];
 
-export function Header({ siteTitle, sectionLabels }: HeaderProps) {
+export function Header({ siteTitle, sectionLabels, githubUrl }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -37,7 +39,17 @@ export function Header({ siteTitle, sectionLabels }: HeaderProps) {
               </a>
             );
           })}
-          <ThemeToggle />
+            {githubUrl ? (
+              <a
+                href={githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                <FaGithub className="h-4 w-4" />
+              </a>
+            ) : null}
+            <ThemeToggle />
         </nav>
 
         <div className="flex items-center gap-1 md:hidden">
