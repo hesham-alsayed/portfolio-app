@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     switch (action) {
       case "fetch": {
-        if (type === "personalInfo" || type === "siteSettings") {
+        if (type === "personalInfo" || type === "siteSettings" || type === "about") {
           const doc = await client.fetch(`*[_type == $type][0]`, { type });
           return NextResponse.json({ data: doc });
         }

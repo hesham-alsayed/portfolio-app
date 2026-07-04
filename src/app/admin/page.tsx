@@ -218,11 +218,14 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    if (active === "about" && sectionData && typeof sectionData === "object" && !Array.isArray(sectionData)) {
+    if (active === "about" && sectionData && typeof sectionData === "object") {
       setAboutDoc(sectionData);
       setFormData(extractFormData(sectionData));
     }
-    if (active === "personalInfo" && sectionData && typeof sectionData === "object" && !Array.isArray(sectionData)) {
+  }, [active, sectionData]);
+
+  useEffect(() => {
+    if (active === "personalInfo" && sectionData && typeof sectionData === "object") {
       setPiDoc(sectionData);
       setFormData(extractFormData(sectionData));
     }
