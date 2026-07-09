@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import { FaArrowDown, FaBolt } from "react-icons/fa";
-import { urlForFile } from "@/lib/sanity/image";
 import type { PersonalInfo } from "@/types/cms";
 import { SpiderWebCanvas } from "@/components/ui/SpiderWebCanvas";
 
@@ -58,7 +57,7 @@ export function HeroSection({ personalInfo }: HeroSectionProps) {
           </a>
           {personalInfo.cvFile ? (
             <a
-              href={urlForFile(personalInfo.cvFile)}
+              href={personalInfo.cvFile}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-border bg-transparent px-8 py-3.5 text-sm font-medium text-foreground transition-all hover:border-accent hover:text-accent"

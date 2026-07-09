@@ -24,7 +24,7 @@ export interface PersonalInfo {
   subheadline?: string;
   email?: string;
   resumeUrl?: string;
-  cvFile?: SanityFileAsset;
+  cvFile?: string;
   heroActions?: HeroAction[];
 }
 

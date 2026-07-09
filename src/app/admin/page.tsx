@@ -10,6 +10,7 @@ import { Modal } from "@/components/admin/Modal";
 import {
   Select, SelectTrigger, SelectValue, SelectContent, SelectItem,
 } from "@/components/ui/select";
+import { FaFilePdf } from "react-icons/fa6";
 
 type Section = "personalInfo" | "skills" | "projects" | "experience" | "socialLinks" | "siteSettings" | "categories" | "about";
 
@@ -79,6 +80,46 @@ function Badge({ children }: { children: React.ReactNode }) {
 // ===================================================================
 // Admin Dashboard
 // ===================================================================
+// ─── PDF Upload ───
+function PdfUpload({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/admin/upload-pdf", { method: "POST", body: fd });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error);
+      onChange(json.url);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      {value ? (
+        <div className="flex items-center gap-3 rounded-xl border border-accent/20 bg-accent/5 px-4 py-3">
+          <FaFilePdf className="h-5 w-5 shrink-0 text-red-500" />
+          <span className="flex-1 truncate text-sm font-medium text-foreground">CV uploaded</span>
+          <button onClick={() => onChange("")} className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500/10 text-xs text-red-500 hover:bg-red-500/20">&times;</button>
+        </div>
+      ) : null}
+      <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-foreground/10 bg-muted/50 px-3 py-2 text-sm text-foreground hover:bg-muted">
+        {uploading ? <Spinner /> : <FaFilePdf />}
+        {uploading ? "Uploading..." : "Upload CV (PDF)"}
+        <input type="file" accept=".pdf" onChange={handleFile} className="hidden" disabled={uploading} />
+      </label>
+    </div>
+  );
+}
+
 // ─── Image Upload ───
 function ImageUpload({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const [uploading, setUploading] = useState(false);
@@ -392,6 +433,14 @@ export default function AdminPage() {
     if (field.type === "imageUpload") {
       return (
         <ImageUpload
+          value={formData[field.key] ?? ""}
+          onChange={(v) => setFormData({ ...formData, [field.key]: v })}
+        />
+      );
+    }
+    if (field.type === "fileUpload") {
+      return (
+        <PdfUpload
           value={formData[field.key] ?? ""}
           onChange={(v) => setFormData({ ...formData, [field.key]: v })}
         />
@@ -749,6 +798,10 @@ const formFields: Record<string, { key: string; label: string; type: string; pla
     { key: "role", label: "Role", type: "text" },
     { key: "headline", label: "Headline", type: "text" },
     { key: "subheadline", label: "Subheadline", type: "textarea" },
+    { key: "bio", label: "Bio", type: "textarea", rows: 5 },
+    { key: "email", label: "Email", type: "text" },
+    { key: "location", label: "Location", type: "text" },
+    { key: "cvFile", label: "CV File (PDF)", type: "fileUpload" },
   ],
   skill: [
     { key: "name", label: "Name", type: "text" },
