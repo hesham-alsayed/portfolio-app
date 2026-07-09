@@ -27,7 +27,8 @@ export const portfolioQuery = `
     subheadline,
     email,
     resumeUrl,
-    heroActions
+    heroActions,
+    cvFile
   },
   "skills": *[_type == "skill"] | order(order asc, name asc){
     _id,

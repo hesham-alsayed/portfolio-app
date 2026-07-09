@@ -53,6 +53,15 @@ export const personalInfo = defineType({
       type: "url",
     }),
     defineField({
+      name: "cvFile",
+      title: "CV (PDF)",
+      description: "Upload your CV as a PDF file. Users can download it from the hero section.",
+      type: "file",
+      options: {
+        accept: ".pdf",
+      },
+    }),
+    defineField({
       name: "heroActions",
       title: "Hero Actions",
       type: "array",

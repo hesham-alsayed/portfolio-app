@@ -8,6 +8,14 @@ export interface HeroAction {
   variant?: ButtonVariant;
 }
 
+export interface SanityFileAsset {
+  _type: "file";
+  asset: {
+    _ref: string;
+    _type: "reference";
+  };
+}
+
 export interface PersonalInfo {
   _id: string;
   name: string;
@@ -16,6 +24,7 @@ export interface PersonalInfo {
   subheadline?: string;
   email?: string;
   resumeUrl?: string;
+  cvFile?: SanityFileAsset;
   heroActions?: HeroAction[];
 }
 
