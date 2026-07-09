@@ -48,7 +48,7 @@ export default async function HomePage() {
         <main>
           <HeroSection personalInfo={personalInfo} />
 
-          <AboutSection about={about} githubUrl={githubUrl} />
+          <AboutSection about={about} githubUrl={githubUrl} cvFile={personalInfo.cvFile} />
 
           <ProjectsSection
             projects={projects}

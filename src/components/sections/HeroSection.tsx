@@ -55,16 +55,7 @@ export function HeroSection({ personalInfo }: HeroSectionProps) {
             See What I Do
             <FaArrowDown className="h-4 w-4" />
           </a>
-          {personalInfo.cvFile ? (
-            <a
-              href={personalInfo.cvFile}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-border bg-transparent px-8 py-3.5 text-sm font-medium text-foreground transition-all hover:border-accent hover:text-accent"
-            >
-              Download CV
-            </a>
-          ) : null}
+
         </motion.div>
       </motion.div>
     </section>

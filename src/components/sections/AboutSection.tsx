@@ -1,19 +1,44 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaGithub, FaDownload, FaUser, FaMapMarkerAlt } from "react-icons/fa";
+import { FaGithub, FaDownload, FaUser, FaMapMarkerAlt, FaSpinner } from "react-icons/fa";
 import type { About } from "@/types/cms";
 
 interface AboutSectionProps {
   about: About | null;
   githubUrl?: string;
+  cvFile?: string;
 }
 
-export function AboutSection({ about, githubUrl }: AboutSectionProps) {
+export function AboutSection({ about, githubUrl, cvFile }: AboutSectionProps) {
+  const [cvLoading, setCvLoading] = useState(false);
+
   if (!about) return null;
 
   const b1Label = about.button1Label || "View Github";
   const b2Label = about.button2Label || "Download CV";
+
+  const handleDownloadCv = async () => {
+    if (!cvFile) return;
+    setCvLoading(true);
+    try {
+      const res = await fetch(cvFile);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Hisham_Al_Sayed_Gomaa_CV.pdf";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch {
+      window.open(cvFile, "_blank");
+    } finally {
+      setCvLoading(false);
+    }
+  };
 
   return (
     <section id="about" className="px-6 py-20">
@@ -73,7 +98,16 @@ export function AboutSection({ about, githubUrl }: AboutSectionProps) {
                   {b1Label}
                 </a>
               ) : null}
-              {about.button2Url ? (
+              {cvFile ? (
+                <button
+                  onClick={handleDownloadCv}
+                  disabled={cvLoading}
+                  className="inline-flex items-center gap-2 rounded-full border border-input bg-background px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-60"
+                >
+                  {cvLoading ? <FaSpinner className="h-4 w-4 animate-spin" /> : <FaDownload className="h-4 w-4" />}
+                  {cvLoading ? "Downloading..." : b2Label}
+                </button>
+              ) : about.button2Url ? (
                 <a
                   href={about.button2Url}
                   className="inline-flex items-center gap-2 rounded-full border border-input bg-background px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-accent hover:text-accent-foreground"
