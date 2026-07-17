@@ -2,6 +2,15 @@ import { NextResponse } from "next/server";
 import { createClient } from "@sanity/client";
 import { v4 as uuid } from "uuid";
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .trim();
+}
+
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET,
@@ -36,6 +45,9 @@ export async function POST(request: Request) {
 
       case "create": {
         if (!data) return NextResponse.json({ error: "data required" }, { status: 400 });
+        if (type === "project" && data.title && !data.slug) {
+          data.slug = { _type: "slug", current: slugify(data.title) };
+        }
         const doc = { _type: type, _id: uuid(), ...data };
         const result = await client.create(doc);
         return NextResponse.json({ data: result });
@@ -43,6 +55,9 @@ export async function POST(request: Request) {
 
       case "update": {
         if (!id || !data) return NextResponse.json({ error: "id and data required" }, { status: 400 });
+        if (type === "project" && data.title) {
+          data.slug = { _type: "slug", current: slugify(data.title) };
+        }
         const result = await client.patch(id).set(data).commit();
         return NextResponse.json({ data: result });
       }
